@@ -15,5 +15,4 @@ public class UrlFeederServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(UrlFeederServiceApplication.class, args);
 	}
-
 }
