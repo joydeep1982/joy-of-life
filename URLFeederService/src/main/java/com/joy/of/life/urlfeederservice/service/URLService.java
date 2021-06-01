@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -32,8 +33,10 @@ public class URLService {
     @Autowired
     private URLRepository urlRepository;
 
+    @Async
     public void save(URL url) {
         try {
+            LOG.info("--------- {}", Thread.currentThread().getName());
             URL existingURL = urlRepository.findByURL(url.getUrl());
             Optional<String> optContentType = Optional.empty();
             if (existingURL != null) {
@@ -64,7 +67,7 @@ public class URLService {
                 url.setContentType(optContentType.get());
             }
             LOG.info("URL: {}, sending to topic: {}", url.getUrl(), topic);
-            kafkaService.send(topic, url.getUrl());
+//            kafkaService.send(topic, url.getUrl());
             urlRepository.save(url);
         } catch (IOException ex) {
             LOG.error("Exception: ", ex);

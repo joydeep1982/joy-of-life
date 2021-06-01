@@ -30,11 +30,13 @@ public class URLResouce {
 
     @PostMapping
     public ResponseEntity<Void> submitURL(@RequestBody URL url) {
+        long startTime = System.currentTimeMillis();
         url.setId(Constants.URL_UUID_PREFIX + UUID.randomUUID().toString());
         url.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         url.setTimesProcessed(0);
         LOG.info("URL received: {}", url);
         urlService.save(url);
+        LOG.info("Request processed in {} mills", (System.currentTimeMillis() - startTime));
         return ResponseEntity.ok().build();
     }
 }
