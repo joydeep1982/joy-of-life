@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.sql.Timestamp;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -28,6 +30,20 @@ public class URLResouce {
         return "pong";
     }
 
+    @PostMapping("/batch")
+    public ResponseEntity<Void> submitBatchURL(@RequestBody Set<URL> urls) {
+        long startTime = System.currentTimeMillis();
+        LOG.info("Batch request received: {}", urls);
+        urls.forEach(u -> {
+            u.setId(Constants.URL_UUID_PREFIX + UUID.randomUUID().toString());
+            u.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+            u.setTimesProcessed(0);
+        });
+        urlService.save(urls);
+        LOG.info("Request processed in {} mills", (System.currentTimeMillis() - startTime));
+        return ResponseEntity.ok().build();
+    }
+
     @PostMapping
     public ResponseEntity<Void> submitURL(@RequestBody URL url) {
         long startTime = System.currentTimeMillis();
@@ -35,7 +51,9 @@ public class URLResouce {
         url.setCreatedDate(new Timestamp(System.currentTimeMillis()));
         url.setTimesProcessed(0);
         LOG.info("URL received: {}", url);
-        urlService.save(url);
+        urlService.save(new HashSet<>(){{
+            add(url);
+        }});
         LOG.info("Request processed in {} mills", (System.currentTimeMillis() - startTime));
         return ResponseEntity.ok().build();
     }
