@@ -34,17 +34,24 @@ public class URLService {
     @Autowired
     private URLRepository urlRepository;
 
+    @Autowired
+    private CacheService cacheService;
+
     @Async
     public void save(Set<URL> urls) {
         for(URL url : urls) {
             try {
                 LOG.info("--------- {}", Thread.currentThread().getName());
+                if (cacheService.get(url.getUrl()) != null) {
+                    return;
+                }
                 URL existingURL = urlRepository.findByURL(url.getUrl());
                 Optional<String> optContentType = Optional.empty();
                 if (existingURL != null) {
                     // we are going to allow processing if the URL has been processed more than 7 days ago
                     if (existingURL.getLastProcessed().getTime() + TimeUnit.DAYS.toMillis(cooldown) > System.currentTimeMillis()) {
                         LOG.info("URL {} already processed on {}", existingURL.getUrl(), existingURL.getLastProcessed());
+                        cacheService.set(existingURL);
                         return;
                     }
                     url = existingURL;
@@ -69,7 +76,8 @@ public class URLService {
                     url.setContentType(optContentType.get());
                 }
                 LOG.info("URL: {}, sending to topic: {}", url.getUrl(), topic);
-                kafkaService.send(topic, url.getUrl());
+//                kafkaService.send(topic, url.getUrl());
+                cacheService.set(url);
                 urlRepository.save(url);
             } catch (IOException ex) {
                 LOG.error("Exception: ", ex);
