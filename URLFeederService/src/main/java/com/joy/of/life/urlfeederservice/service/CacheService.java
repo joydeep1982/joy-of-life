@@ -39,7 +39,7 @@ public class CacheService {
     }
 
     public void set(URL url) {
-        Long ttlSeconds = TimeUnit.DAYS.toSeconds(this.ttl);
+        long ttlSeconds = TimeUnit.DAYS.toSeconds(this.ttl);
         statefulRedisConnection.sync().setex(url.getUrl(), ttlSeconds, url);
     }
 

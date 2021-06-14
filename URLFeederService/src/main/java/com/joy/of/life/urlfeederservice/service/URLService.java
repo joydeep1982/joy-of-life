@@ -45,9 +45,10 @@ public class URLService {
                 if (cacheService.get(url.getUrl()) != null) {
                     return;
                 }
-                URL existingURL = urlRepository.findByURL(url.getUrl());
+                Optional<URL> existingURLOpt = urlRepository.findByUrl(url.getUrl());
                 Optional<String> optContentType = Optional.empty();
-                if (existingURL != null) {
+                if (!existingURLOpt.isEmpty()) {
+                    URL existingURL = existingURLOpt.get();
                     // we are going to allow processing if the URL has been processed more than 7 days ago
                     if (existingURL.getLastProcessed().getTime() + TimeUnit.DAYS.toMillis(cooldown) > System.currentTimeMillis()) {
                         LOG.info("URL {} already processed on {}", existingURL.getUrl(), existingURL.getLastProcessed());
