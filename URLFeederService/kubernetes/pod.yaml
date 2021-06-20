@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: urlfeederservice
+  labels:
+    name: urlfeederservice
+spec:
+  containers:
+    - name: urlfeederservice
+      image: joydeep1982/urlfeederservice:1
+      imagePullPolicy: Always
+      ports:
+        - containerPort: 8085
+      resources:
+        requests:
+          memory: "256Mi"
+          cpu: "500m"
+        limits:
+          memory: "512Mi"
+          cpu: "1000m"
+  imagePullSecrets:
+    - name: docker-hub-secret

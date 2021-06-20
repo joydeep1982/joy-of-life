@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata:
+  name: urlfeederservice-rs
+  labels:
+    name: urlfeederservice
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: urlfeederservice-web
+  template:
+    metadata:
+      labels:
+        app: urlfeederservice-web
+    spec:
+      containers:
+        - name: webapp
+          image: joydeep1982/urlfeederservice:1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8085
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "500m"
+            limits:
+              memory: "512Mi"
+              cpu: "1000m"
+      imagePullSecrets:
+        - name:  docker-hub-secret

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: urlfeederservice-web
+spec:
+  type: ClusterIP
+  selector:
+    app: urlfeederservice-web
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8085
+
