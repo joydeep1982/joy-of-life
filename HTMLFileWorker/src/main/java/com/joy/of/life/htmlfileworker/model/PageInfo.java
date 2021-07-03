@@ -6,6 +6,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.sql.Timestamp;
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -34,5 +36,5 @@ public class PageInfo {
     private String body;
 
     @Field(name = "created_time")
-    private Timestamp createdTime;
+    private Date createdTime;
 }

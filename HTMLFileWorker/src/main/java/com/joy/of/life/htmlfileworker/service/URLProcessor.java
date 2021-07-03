@@ -16,6 +16,8 @@ import retrofit2.Retrofit;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -30,12 +32,12 @@ public class URLProcessor {
     private PageRepository pageRepository;
 
     @Async
-    public void process(String url) {
+    public void process(String url, String urlId) {
         try {
             Document doc = Jsoup.connect(url).get();
             Set<URL> urls = fetchAnchorTags(doc);
             PageInfo pageInfo = fetchMetaInformation(doc);
-            pageInfo.setUrlId(UUID.randomUUID().toString());
+            pageInfo.setUrlId(urlId);
             pageInfo.setUrl(url);
             LOG.info("PageInfo: {}", pageInfo);
             pageRepository.save(pageInfo);
@@ -55,7 +57,7 @@ public class URLProcessor {
                 .description(description(doc))
                 .body(body(doc))
                 .keywords(keywords(doc))
-                .createdTime(new Timestamp(System.currentTimeMillis()))
+                .createdTime(new Date())
                 .build();
     }
 

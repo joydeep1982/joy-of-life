@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class HTMLWorker {
 
@@ -18,7 +20,7 @@ public class HTMLWorker {
     @KafkaListener(topics = "html_topic", groupId = "group_id")
     public void consume(String message) {
         LOG.info("Received message: {}", message);
-        urlProcessor.process(message);
+        urlProcessor.process(message, UUID.randomUUID().toString());
     }
 }
 

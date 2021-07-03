@@ -37,6 +37,10 @@ public class URLService {
     @Autowired
     private CacheService cacheService;
 
+    public Optional<URL> get(String id) {
+        return urlRepository.findById(id);
+    }
+
     @Async
     public void save(Set<URL> urls) {
         for(URL url : urls) {
@@ -77,7 +81,7 @@ public class URLService {
                     url.setContentType(optContentType.get());
                 }
                 LOG.info("URL: {}, sending to topic: {}", url.getUrl(), topic);
-//                kafkaService.send(topic, url.getUrl());
+                kafkaService.send(topic, url.getUrl());
                 cacheService.set(url);
                 urlRepository.save(url);
             } catch (IOException ex) {

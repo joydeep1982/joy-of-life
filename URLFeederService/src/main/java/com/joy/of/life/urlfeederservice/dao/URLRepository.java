@@ -19,4 +19,7 @@ public interface URLRepository extends CassandraRepository<URL, String> {
 
     @AllowFiltering
     Optional<URL> findByUrl(String url);
+
+    @AllowFiltering
+    Optional<URL> findById(String id);
 }
