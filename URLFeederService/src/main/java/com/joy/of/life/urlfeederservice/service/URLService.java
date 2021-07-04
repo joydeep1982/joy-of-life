@@ -51,7 +51,7 @@ public class URLService {
                 }
                 Optional<URL> existingURLOpt = urlRepository.findByUrl(url.getUrl());
                 Optional<String> optContentType = Optional.empty();
-                if (!existingURLOpt.isEmpty()) {
+                if (existingURLOpt.isPresent()) {
                     URL existingURL = existingURLOpt.get();
                     // we are going to allow processing if the URL has been processed more than 7 days ago
                     if (existingURL.getLastProcessed().getTime() + TimeUnit.DAYS.toMillis(cooldown) > System.currentTimeMillis()) {
@@ -81,7 +81,7 @@ public class URLService {
                     url.setContentType(optContentType.get());
                 }
                 LOG.info("URL: {}, sending to topic: {}", url.getUrl(), topic);
-                kafkaService.send(topic, url.getUrl());
+                kafkaService.send(topic, url);
                 cacheService.set(url);
                 urlRepository.save(url);
             } catch (IOException ex) {
