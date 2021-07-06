@@ -30,6 +30,9 @@ public class KafkaConfig {
     @Value("${spring.kafka.consumer.auto-offset-reset:latest}")
     private String autoOffsetResetConfig;
 
+    @Value("${spring.kafka.consumer.properties.spring.json.trusted.packages}")
+    private String trustedPackage;
+
     @Bean
     public ConsumerFactory<String, URL> consumerFactory() {
         Map<String, Object> props = new HashMap<>();
@@ -44,7 +47,7 @@ public class KafkaConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
 
         JsonDeserializer<URL> jsonDeserializer = new JsonDeserializer<>(URL.class, false);
-        jsonDeserializer.addTrustedPackages("com.joy.of.life.htmlfileworker.model");
+        jsonDeserializer.addTrustedPackages(trustedPackage);
         return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), jsonDeserializer);
     }
 
